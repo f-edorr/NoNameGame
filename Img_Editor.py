@@ -2,6 +2,8 @@ import os
 import sys
 import pygame
 
+SIZE = WIDTH, HEIGHT = 700, 500
+
 
 class ImgEditor():
 
@@ -22,11 +24,8 @@ class ImgEditor():
             image = image.convert_alpha()
         return image
 
-    def transform_image(self, name):
-        pass
-
-    def enhance_image(self, name):
-        pass
+    def enhance_image(self, img, val):
+        return pygame.transform.scale(img, (WIDTH * val, HEIGHT * val))
 
     def cut_image(self, name):
         pass
