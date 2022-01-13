@@ -9,7 +9,6 @@ class ImgEditor():
 
     def load_image(self, name, path="", colorkey=None):
         fullname = os.path.join('data' + path, name)
-        # если файл не существует, то выходим
         if not os.path.isfile(fullname):
             print(f"Файл с изображением '{fullname}' не найден")
             sys.exit()
@@ -25,7 +24,7 @@ class ImgEditor():
         return image
 
     def enhance_image(self, img, val):
-        return pygame.transform.scale(img, (WIDTH * val, HEIGHT * val))
+        return pygame.transform.scale(img, (img.get_rect()[2] * val, img.get_rect()[3] * val))
 
     def cut_image(self, name):
         pass
