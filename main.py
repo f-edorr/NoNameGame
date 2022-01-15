@@ -26,6 +26,7 @@ if __name__ == '__main__':
     editor = ImgEditor()
     pygame.display.set_icon(editor.load_image("icon.png", colorkey=-1))
     fullscreen = False
+    new_game = False
 
     # StartWindow
     background = pygame.sprite.Group()
@@ -56,16 +57,29 @@ if __name__ == '__main__':
     new_sprite(fs_btn, fs_btn_img, bckgnd.rect[2] - 50, 25)
     buttons.add(fs_btn, start_btn, upload_btn, exit_btn)
 
+    # New game window
+
+
+
     running = True
 
     while running:
         screen.fill(pygame.Color('black'))
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT or (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and (
-                        exit_btn.rect.x + exit_btn.rect[2]) >=
-                event.pos[0] >= exit_btn.rect.x and (exit_btn.rect.y + exit_btn.rect[3]) >= event.pos[
-                    1] >= exit_btn.rect.y):
+                    exit_btn.rect.x + exit_btn.rect[2]) >=
+                                             event.pos[0] >= exit_btn.rect.x and (exit_btn.rect.y + exit_btn.rect[3]) >=
+                                             event.pos[
+                                                 1] >= exit_btn.rect.y):
                 running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and (
+                    start_btn.rect.x + start_btn.rect[2]) >= event.pos[0] >= start_btn.rect.x and (
+                    start_btn.rect.y + start_btn.rect[3]) >= event.pos[
+                1] >= start_btn.rect.y:
+                new_game = True
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and (fs_btn.rect.x + fs_btn.rect[2]) >= \
                     event.pos[0] >= fs_btn.rect.x and (fs_btn.rect.y + fs_btn.rect[3]) >= event.pos[
                 1] >= fs_btn.rect.y and not fullscreen:
