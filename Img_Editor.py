@@ -2,8 +2,6 @@ import os
 import sys
 import pygame
 
-SIZE = WIDTH, HEIGHT = 700, 500
-
 
 class ImgEditor():
 
