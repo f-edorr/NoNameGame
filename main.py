@@ -1,5 +1,6 @@
 import pygame
 from Img_Editor import ImgEditor
+from button import Button
 
 SIZE = WIDTH, HEIGHT = 700, 500
 
@@ -36,11 +37,12 @@ if __name__ == '__main__':
     background.add(bckgnd)
 
     buttons = pygame.sprite.Group()
-    start_btn = pygame.sprite.Sprite()
+    # start_btn = pygame.sprite.Sprite()
     start_btn_img = editor.enhance_image(editor.load_image("start.png", f"\main_menu", -1), 3)
-    start_btn.image = start_btn_img
-    new_sprite(start_btn, start_btn_img, WIDTH // 2 - start_btn_img.get_width() // 2,
-               HEIGHT // 2 - start_btn_img.get_height() // 2)
+    start_btn = Button(start_btn_img, WIDTH // 2 - start_btn_img.get_width() // 2,
+                       HEIGHT // 2 - start_btn_img.get_height() // 2)
+    # new_sprite(start_btn, start_btn_img, WIDTH // 2 - start_btn_img.get_width() // 2,
+    #            HEIGHT // 2 - start_btn_img.get_height() // 2)
 
     upload_btn = pygame.sprite.Sprite()
     upload_btn_img = editor.enhance_image(editor.load_image("upload.png", f"\main_menu", -1), 3)
@@ -107,11 +109,11 @@ if __name__ == '__main__':
                         enter_btn.rect.y + enter_btn.rect[3]) >= event.pos[1] >= enter_btn.rect.y):
                     enter_btn.image = editor.enhance_image(editor.load_image("enter2.png", f"\main_menu", -1), 3)
                     if fullscreen:
-                        enter_btn.image = editor.enhance_image(enter_btn.image, monitor[1]/HEIGHT)
+                        enter_btn.image = editor.enhance_image(enter_btn.image, monitor[1] / HEIGHT)
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     enter_btn.image = editor.enhance_image(editor.load_image("enter1.png", f"\main_menu", -1), 3)
                     if fullscreen:
-                        enter_btn.image = editor.enhance_image(enter_btn.image, monitor[1]/HEIGHT)
+                        enter_btn.image = editor.enhance_image(enter_btn.image, monitor[1] / HEIGHT)
 
 
 
