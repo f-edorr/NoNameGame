@@ -20,7 +20,7 @@ class Button(pygame.sprite.Sprite):
     def is_mouse_on(self):
         pos_x = pygame.mouse.get_pos()[0]
         pos_y = pygame.mouse.get_pos()[1]
-        if self.rect.x + self.rect[2] >= pos_x >= self.rect.x and self.rect.y + self.rect[2] >= pos_y >= self.rect.y:
+        if self.rect.x + self.rect[2] >= pos_x >= self.rect.x and self.rect.y + self.rect[3] >= pos_y >= self.rect.y:
             return True
         else:
             return False

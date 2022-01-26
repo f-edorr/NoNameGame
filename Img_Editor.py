@@ -26,5 +26,14 @@ class ImgEditor:
         return pygame.transform.scale(img, (img.get_rect()[2] * val, img.get_rect()[3] * val))
 
     @staticmethod
-    def cut_image(name):
-        pass
+    def cut_sheet(sheet, columns, rows):
+        frames = []
+        rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (rect.w * i, rect.h * j)
+                frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, rect.size)))
+
+        return frames
