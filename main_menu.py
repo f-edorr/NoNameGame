@@ -6,9 +6,9 @@ SIZE = WIDTH, HEIGHT = 700, 500
 
 
 class MainMenu:
-    def __init__(self, screen, monitor):
+    def __init__(self, monitor):
         self.monitor = monitor
-        self.screen = screen
+        self.screen = pygame.display.get_surface()
         self.running = True
         self.fullscreen = False
         self.new_game = False

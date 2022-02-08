@@ -1,6 +1,6 @@
 import pygame
 
-from character import Character
+from player import Player
 from Img_Editor import ImgEditor
 from button import Button
 from world_sprite import WorldSprite
@@ -9,16 +9,18 @@ SIZE = WIDTH, HEIGHT = 700, 500
 
 
 class Scene:
-    def __init__(self, screen, monitor, parent_fs):
+    def __init__(self, monitor, parent_fs):
         self.monitor = monitor
-        self.screen = screen
+        self.screen = pygame.display.get_surface()
         self.running = True
         self.fullscreen = False
         self.parent_fs = parent_fs
 
         self.jack_dialog = False
 
-        self.background = pygame.sprite.Group()
+        self.visible_sprites = pygame.sprite.Group()
+        self.obstacle_sprites = pygame.sprite.Group()
+
         self.bckgnd = pygame.sprite.Sprite()
         self.bckgnd_img = ImgEditor.enhance_image(ImgEditor.load_image("background.png", f"\scene1"), 2)
         self.new_sprite(self.bckgnd, self.bckgnd_img, 0, 0)
@@ -27,15 +29,13 @@ class Scene:
         self.new_sprite(self.border, self.border_img, 0, 0)
         self.border.mask = pygame.mask.from_surface(self.border_img)
 
-        self.background.add(self.bckgnd, self.border)
+        self.visible_sprites.add(self.bckgnd, self.border)
 
         self.buttons = pygame.sprite.Group()
         self.fs_btn_img = ImgEditor.load_image("fs_btn1.png", f"\main_menu", -1)
         self.fs_btn = Button(self.fs_btn_img, self.bckgnd.rect[2] - 50, 25)
 
         self.buttons.add(self.fs_btn)
-
-        self.world_sprites = pygame.sprite.Group()
 
         self.tree_img = ImgEditor.enhance_image(ImgEditor.load_image("tree.png", f"\world_sprites", -1), 2)
         self.tree = WorldSprite(self.tree_img, 400, 100)
@@ -51,13 +51,12 @@ class Scene:
         self.jack = WorldSprite(self.jack_img, 435, 245, "Hi!",
                                 ImgEditor.enhance_image(ImgEditor.load_image("jack.png", f"\characters", -1), 3))
 
-        self.world_sprites.add(self.tree, self.lake, self.bush1, self.bush2, self.jack)
+        self.visible_sprites.add(self.tree, self.lake, self.bush1, self.bush2, self.jack)
 
-        self.characters = pygame.sprite.Group()
         self.main_ch_sheet = ImgEditor.enhance_image(ImgEditor.load_image("main_animation.png", "", -1), 2)
-        self.main_ch = Character(self.main_ch_sheet, 300, 300)
+        self.player = Player(self.main_ch_sheet, 300, 300)
 
-        self.characters.add(self.main_ch)
+        self.visible_sprites.add(self.player)
 
     def run(self):
         while self.running:
@@ -121,20 +120,10 @@ class Scene:
                     self.fs_btn_clicked(self.bush2, self.bush_img, 370, 372)
                     self.fs_btn_clicked(self.jack, self.jack_img, 435, 245)
 
-                    self.main_ch.fs_update(self.main_ch_sheet, self.main_ch.x // (self.monitor[1] / HEIGHT),
-                                           self.main_ch.y // (self.monitor[1] / HEIGHT))
-                keys = pygame.key.get_pressed()
+                    self.player.fs_update(self.main_ch_sheet, self.player.x // (self.monitor[1] / HEIGHT),
+                                           self.player.y // (self.monitor[1] / HEIGHT))
 
-                if keys[pygame.K_w]:
-                    self.main_ch.moving('w')
-                if keys[pygame.K_a]:
-                    self.main_ch.moving('a')
-                if keys[pygame.K_s]:
-                    self.main_ch.moving('s')
-                if keys[pygame.K_d]:
-                    self.main_ch.moving('d')
-
-                if event.type == pygame.KEYDOWN and event.scancode == 8 and pygame.sprite.collide_mask(self.main_ch,
+                if event.type == pygame.KEYDOWN and event.scancode == 8 and pygame.sprite.collide_mask(self.player,
                                                                                                        self.jack):
                     self.jack_dialog = True
                 if self.jack.dialog.is_clicked(event):
@@ -156,9 +145,10 @@ class Scene:
         sprite.rect.y = y
 
     def draw_scene(self):
-        self.background.draw(self.screen)
-        self.world_sprites.draw(self.screen)
-        self.characters.draw(self.screen)
+
+        self.visible_sprites.draw(self.screen)
         self.buttons.draw(self.screen)
+
+        self.visible_sprites.update()
         if self.jack_dialog:
             self.jack.draw_dialog(self.fullscreen, self.screen, self.monitor)
