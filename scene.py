@@ -99,8 +99,8 @@ class Scene:
                     self.fs_btn_clicked(self.bush2, new_image, 800, 645)
 
                     new_image = ImgEditor.enhance_image(self.main_ch_sheet, self.monitor[1] / HEIGHT)
-                    self.main_ch.fs_update(new_image, self.main_ch.x * self.monitor[1] / HEIGHT,
-                                           self.main_ch.y * self.monitor[1] / HEIGHT)
+                    self.player.fs_update(new_image, self.player.x * self.monitor[1] / HEIGHT,
+                                           self.player.y * self.monitor[1] / HEIGHT)
 
 
                 elif ((event.type == pygame.KEYDOWN and event.scancode == 41) or

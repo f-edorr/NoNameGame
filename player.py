@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, sheet, x, y):
         super().__init__()
         self.direction = pygame.math.Vector2()
-        self.speed = 1
+        self.speed = 5
 
         self.x = x
         self.y = y
@@ -51,6 +51,17 @@ class Player(pygame.sprite.Sprite):
 
     def moving(self, speed):
         self.rect.center += speed * self.direction
+        # self.rect.y += speed * self.direction.y
+        # self.rect.x += speed * self.direction.x
+        # if self.direction.y == 1:
+        #     self.rect.y += speed
+        # if self.direction.y == -1:
+        #     self.rect.y -= speed
+        # if self.direction.x == 1:
+        #     self.rect.x += 5
+        # if self.direction.x == -1:
+        #     self.rect.x -= 5
+
         print(self.rect.x, self.rect.y, speed * self.direction)
 
     def update(self):
