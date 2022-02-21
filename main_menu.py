@@ -36,7 +36,7 @@ class MainMenu:
         self.exit_btn = Button(self.exit_btn_img, WIDTH // 2 - self.exit_btn_img.get_width() // 2,
                                HEIGHT // 2 - self.exit_btn_img.get_height() // 2 + self.upload_btn_img.get_height() + 10 + self.exit_btn_img.get_height() + 10)
 
-        self.fs_btn_img = ImgEditor.load_image("fs_btn1.png", f"\main_menu", -1)
+        self.fs_btn_img = ImgEditor.load_image("fs_btn_night_1.png", f"\main_menu", -1)
         self.fs_btn = Button(self.fs_btn_img, self.bckgnd.rect[2] - 50, 25)
 
         self.buttons.add(self.fs_btn, self.start_btn, self.upload_btn, self.exit_btn)
@@ -129,7 +129,7 @@ class MainMenu:
                         self.fs_btn_clicked(self.bckgnd, new_image,
                                             (self.monitor[0] - WIDTH * (self.monitor[1] / HEIGHT)) // 2, 0)
 
-                        new_image = ImgEditor.enhance_image(ImgEditor.load_image("fs_btn2.png", f"\main_menu", -1),
+                        new_image = ImgEditor.enhance_image(ImgEditor.load_image("fs_btn_night_2.png", f"\main_menu", -1),
                                                             self.monitor[1] / HEIGHT)
 
                         self.fs_btn_clicked(self.fs_btn, new_image,
@@ -184,7 +184,7 @@ class MainMenu:
 
                         self.fs_btn_clicked(self.bckgnd, self.bckgnd_img, 0, 0)
 
-                        fs_btn_img = ImgEditor.load_image("fs_btn1.png", f"\main_menu", -1)
+                        fs_btn_img = ImgEditor.load_image("fs_btn_night_1.png", f"\main_menu", -1)
                         self.fs_btn_clicked(self.fs_btn, fs_btn_img, self.bckgnd.rect[2] - 50, 25)
 
                         self.fs_btn_clicked(self.start_btn, self.start_btn_img,

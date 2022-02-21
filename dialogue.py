@@ -1,35 +1,32 @@
 import pygame
+
+from player import Player
 from Img_Editor import ImgEditor
 from button import Button
+from world_sprite import WorldSprite
 
 SIZE = WIDTH, HEIGHT = 700, 500
+FPS = 60
 
-
-class WorldSprite(pygame.sprite.Sprite):
-    def __init__(self, img, x, y, text="Здесь ничего нет.", big_image=-1):
+class Dialogue:
+    def __init__(self, big_image, text, time):
         super().__init__()
-        self.image = img
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
         self.text = text
         self.big_image = big_image
 
         self.dialog_sprites = pygame.sprite.Group()
+        if time == 'day':
+            self.dialog_img = ImgEditor.enhance_image(ImgEditor.load_image("dialog_day.png", ""), 2)
+        else:
+            self.dialog_img = ImgEditor.enhance_image(ImgEditor.load_image("dialog_night.png", ""), 2)
 
-        self.dialog_img = ImgEditor.enhance_image(ImgEditor.load_image("dialog_day.png", ""), 2)
         self.dialog = Button(self.dialog_img, 0, 350)
-        if self.big_image != -1:
-            self.big_sprite = pygame.sprite.Sprite()
-            self.big_sprite.image = self.big_image
-            self.big_sprite.rect = self.big_image.get_rect()
-            self.big_sprite.rect.x = 500
-            self.big_sprite.rect.y = 140
-            self.dialog_sprites.add(self.big_sprite)
-
-        self.dialog_sprites.add(self.dialog)
-
+        self.big_sprite = pygame.sprite.Sprite()
+        self.big_sprite.image = self.big_image
+        self.big_sprite.rect = self.big_image.get_rect()
+        self.big_sprite.rect.x = 450
+        self.big_sprite.rect.y = 140
+        self.dialog_sprites.add(self.big_sprite, self.dialog)
 
     def draw_dialog(self, fs, screen, monitor):
         keys = pygame.key.get_pressed()

@@ -6,12 +6,13 @@ from button import Button
 from world_sprite import WorldSprite
 
 SIZE = WIDTH, HEIGHT = 700, 500
-
+FPS = 60
 
 class Scene:
     def __init__(self, monitor, parent_fs):
         self.monitor = monitor
         self.screen = pygame.display.get_surface()
+        self.clock = pygame.time.Clock()
         self.running = True
         self.fullscreen = False
         self.parent_fs = parent_fs
@@ -32,7 +33,7 @@ class Scene:
         self.visible_sprites.add(self.bckgnd, self.border)
 
         self.buttons = pygame.sprite.Group()
-        self.fs_btn_img = ImgEditor.load_image("fs_btn1.png", f"\main_menu", -1)
+        self.fs_btn_img = ImgEditor.load_image("fs_btn_day_1.png", f"\main_menu", -1)
         self.fs_btn = Button(self.fs_btn_img, self.bckgnd.rect[2] - 50, 25)
 
         self.buttons.add(self.fs_btn)
@@ -54,7 +55,8 @@ class Scene:
         self.visible_sprites.add(self.tree, self.lake, self.bush1, self.bush2, self.jack)
 
         self.main_ch_sheet = ImgEditor.enhance_image(ImgEditor.load_image("main_animation.png", "", -1), 2)
-        self.player = Player(self.main_ch_sheet, 300, 300)
+        self.obstacle_sprites.add(self.bush1, self.bush2, self.tree, self.lake, self.jack, self.border)
+        self.player = Player(self.main_ch_sheet, 300, 300, self.obstacle_sprites)
 
         self.visible_sprites.add(self.player)
 
@@ -79,7 +81,7 @@ class Scene:
                     self.fs_btn_clicked(self.border, new_image,
                                         (self.monitor[0] - WIDTH * (self.monitor[1] / HEIGHT)) // 2, 0)
 
-                    new_image = ImgEditor.enhance_image(ImgEditor.load_image("fs_btn2.png", f"\main_menu", -1),
+                    new_image = ImgEditor.enhance_image(ImgEditor.load_image("fs_btn_day_2.png", f"\main_menu", -1),
                                                         self.monitor[1] / HEIGHT)
                     self.fs_btn_clicked(self.fs_btn, new_image,
                                         self.monitor[0] - 25 - new_image.get_width() - (
@@ -111,7 +113,7 @@ class Scene:
                     self.fs_btn_clicked(self.bckgnd, self.bckgnd_img, 0, 0)
                     self.fs_btn_clicked(self.border, self.border_img, 0, 0)
 
-                    fs_btn_img = ImgEditor.load_image("fs_btn1.png", f"\main_menu", -1)
+                    fs_btn_img = ImgEditor.load_image("fs_btn_day_1.png", f"\main_menu", -1)
                     self.fs_btn_clicked(self.fs_btn, fs_btn_img, self.bckgnd.rect[2] - 50, 25)
 
                     self.fs_btn_clicked(self.tree, self.tree_img, 400, 100)
@@ -123,17 +125,20 @@ class Scene:
                     self.player.fs_update(self.main_ch_sheet, self.player.x // (self.monitor[1] / HEIGHT),
                                            self.player.y // (self.monitor[1] / HEIGHT))
 
-                if event.type == pygame.KEYDOWN and event.scancode == 8 and pygame.sprite.collide_mask(self.player,
-                                                                                                       self.jack):
+                if self.player.is_collide(self.jack) and (event.type == pygame.KEYDOWN and event.scancode == 8):
                     self.jack_dialog = True
                 if self.jack.dialog.is_clicked(event):
                     self.jack_dialog = False
 
+
             self.draw_scene()
             pygame.display.flip()
+            pygame.display.update()
+            self.clock.tick(FPS)
 
     def fs_btn_clicked(self, sprite, image, x, y):
         sprite.image = image
+        sprite.mask = pygame.mask.from_surface(image)
         sprite.rect = sprite.image.get_rect()
         sprite.rect.x = x
         sprite.rect.y = y
@@ -143,12 +148,13 @@ class Scene:
         sprite.rect = image.get_rect()
         sprite.rect.x = x
         sprite.rect.y = y
+        sprite.mask = pygame.mask.from_surface(sprite.image)
 
     def draw_scene(self):
 
         self.visible_sprites.draw(self.screen)
         self.buttons.draw(self.screen)
 
-        self.visible_sprites.update()
+        self.visible_sprites.update(self.fullscreen, self.monitor[1] / HEIGHT)
         if self.jack_dialog:
             self.jack.draw_dialog(self.fullscreen, self.screen, self.monitor)
