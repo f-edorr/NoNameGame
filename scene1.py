@@ -8,8 +8,13 @@ from world_sprite import WorldSprite
 SIZE = WIDTH, HEIGHT = 700, 500
 FPS = 60
 
-class Scene:
+
+class Scene_1:
     def __init__(self, monitor, parent_fs):
+        file = open(f"./data/txts/player.txt", encoding="utf-8")
+        data = file.read().split('\n')
+        self.player_name = data[0]
+        file.close()
         self.monitor = monitor
         self.screen = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
@@ -49,14 +54,14 @@ class Scene:
         self.bush2 = WorldSprite(self.bush_img, 370, 372)
 
         self.jack_img = ImgEditor.enhance_image(ImgEditor.load_image("jack.png", f"\world_sprites", -1), 2)
-        self.jack = WorldSprite(self.jack_img, 435, 245, "Hi!",
+        self.jack = WorldSprite(self.jack_img, 435, 245,
+                                f"Привет, {self.player_name}! Ты ищешь своего друга?\nЯ могу провести тебя через лес.\nВозьми рогатку и помоги мне победить всех врагов!",
                                 ImgEditor.enhance_image(ImgEditor.load_image("jack.png", f"\characters", -1), 3))
 
         self.visible_sprites.add(self.tree, self.lake, self.bush1, self.bush2, self.jack)
 
-        self.main_ch_sheet = ImgEditor.enhance_image(ImgEditor.load_image("main_animation.png", "", -1), 2)
         self.obstacle_sprites.add(self.bush1, self.bush2, self.tree, self.lake, self.jack, self.border)
-        self.player = Player(self.main_ch_sheet, 300, 300, self.obstacle_sprites)
+        self.player = Player(300, 300, self.obstacle_sprites)
 
         self.visible_sprites.add(self.player)
 
@@ -67,7 +72,8 @@ class Scene:
                 if event.type == pygame.QUIT:
                     self.running = False
                     return -1, self.fullscreen
-
+                if event.type == pygame.KEYDOWN:
+                    print(event.scancode)
                 if (self.fs_btn.is_clicked(event) and not self.fullscreen) or self.parent_fs:
                     self.parent_fs = False
                     self.fullscreen = True
@@ -100,9 +106,7 @@ class Scene:
                     self.fs_btn_clicked(self.bush1, new_image, 381, 426)
                     self.fs_btn_clicked(self.bush2, new_image, 800, 645)
 
-                    new_image = ImgEditor.enhance_image(self.main_ch_sheet, self.monitor[1] / HEIGHT)
-                    self.player.fs_update(new_image, self.player.x * self.monitor[1] / HEIGHT,
-                                           self.player.y * self.monitor[1] / HEIGHT)
+                    self.player.fs_update(600, 500, self.fullscreen, self.monitor[1] / HEIGHT)
 
 
                 elif ((event.type == pygame.KEYDOWN and event.scancode == 41) or
@@ -122,14 +126,15 @@ class Scene:
                     self.fs_btn_clicked(self.bush2, self.bush_img, 370, 372)
                     self.fs_btn_clicked(self.jack, self.jack_img, 435, 245)
 
-                    self.player.fs_update(self.main_ch_sheet, self.player.x // (self.monitor[1] / HEIGHT),
-                                           self.player.y // (self.monitor[1] / HEIGHT))
+                    self.player.fs_update(300, 300, self.fullscreen, self.monitor[1] / HEIGHT)
 
                 if self.player.is_collide(self.jack) and (event.type == pygame.KEYDOWN and event.scancode == 8):
                     self.jack_dialog = True
-                if self.jack.dialog.is_clicked(event):
+                if (self.jack.dialog.is_clicked(event) or (event.type == pygame.KEYDOWN and (
+                        event.scancode == 79 or event.scancode == 7))) and self.jack_dialog:
                     self.jack_dialog = False
-
+                    self.running = False
+                    return 2, self.fullscreen
 
             self.draw_scene()
             pygame.display.flip()
@@ -154,7 +159,7 @@ class Scene:
 
         self.visible_sprites.draw(self.screen)
         self.buttons.draw(self.screen)
-
-        self.visible_sprites.update(self.fullscreen, self.monitor[1] / HEIGHT)
         if self.jack_dialog:
             self.jack.draw_dialog(self.fullscreen, self.screen, self.monitor)
+        else:
+            self.visible_sprites.update(self.fullscreen, self.monitor[1] / HEIGHT)

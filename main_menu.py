@@ -12,6 +12,7 @@ class MainMenu:
         self.running = True
         self.fullscreen = False
         self.new_game = False
+        self.instruction = False
         self.enter = False
         self.text = ""
         # StartWindow
@@ -28,7 +29,7 @@ class MainMenu:
         self.start_btn = Button(self.start_btn_img, WIDTH // 2 - self.start_btn_img.get_width() // 2,
                                 HEIGHT // 2 - self.start_btn_img.get_height() // 2)
 
-        self.upload_btn_img = ImgEditor.enhance_image(ImgEditor.load_image("upload.png", f"\main_menu", -1), 3)
+        self.upload_btn_img = ImgEditor.enhance_image(ImgEditor.load_image("instruct.png", f"\main_menu", -1), 3)
         self.upload_btn = Button(self.upload_btn_img, WIDTH // 2 - self.upload_btn_img.get_width() // 2,
                                  HEIGHT // 2 - self.upload_btn_img.get_height() // 2 + self.upload_btn_img.get_height() + 10)
 
@@ -41,17 +42,22 @@ class MainMenu:
 
         self.buttons.add(self.fs_btn, self.start_btn, self.upload_btn, self.exit_btn)
 
+        self.instruction_group = pygame.sprite.Group()
+        self.instruction_bck_img = ImgEditor.enhance_image(ImgEditor.load_image("instruction.png", f"\main_menu", -1),
+                                                           1.5)
+        self.instruction_bck = Button(self.instruction_bck_img, WIDTH // 2 - self.instruction_bck_img.get_width() // 2,
+                                      HEIGHT // 2 - self.instruction_bck_img.get_height() // 2)
+        self.back_btn_img = ImgEditor.enhance_image(ImgEditor.load_image("back_btn.png", f"\main_menu", -1), 1)
+        self.back_btn = Button(self.back_btn_img,
+                               self.instruction_bck.rect.x + self.instruction_bck_img.get_width() - self.back_btn_img.get_width() - 25,
+                               self.instruction_bck.rect.y + 25)
+        self.instruction_group.add(self.instruction_bck, self.back_btn)
         # New game window
         self.new_game_group = pygame.sprite.Group()
 
         self.new_game_bck_img = ImgEditor.enhance_image(ImgEditor.load_image("new_game.png", f"\main_menu", -1), 1.5)
         self.new_game_bck = Button(self.new_game_bck_img, WIDTH // 2 - self.new_game_bck_img.get_width() // 2,
                                    HEIGHT // 2 - self.new_game_bck_img.get_height() // 2)
-
-        self.back_btn_img = ImgEditor.enhance_image(ImgEditor.load_image("back_btn.png", f"\main_menu", -1), 1)
-        self.back_btn = Button(self.back_btn_img,
-                               self.new_game_bck.rect.x + self.new_game_bck_img.get_width() - self.back_btn_img.get_width() - 25,
-                               self.new_game_bck.rect.y + 25)
 
         self.enter_btn_img = ImgEditor.enhance_image(ImgEditor.load_image("enter1.png", f"\main_menu", -1), 3)
         self.enter_btn = Button(self.enter_btn_img,
@@ -106,7 +112,22 @@ class MainMenu:
                             self.text += event.unicode
 
                     if self.begin_btn.is_clicked(event):
+                        file = open(f"./data/txts/player.txt", 'w')
+                        print(self.text, file=file)
+                        file.close()
                         return 1, self.fullscreen
+
+                elif self.instruction:
+                    if self.back_btn.is_mouse_on() or self.enter_btn.is_mouse_on() or self.begin_btn.is_mouse_on():
+                        pygame.mouse.set_cursor(pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_HAND))
+                    else:
+                        pygame.mouse.set_cursor(pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW))
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                        return -1, self.fullscreen
+
+                    if self.back_btn.is_clicked(event):
+                        self.instruction = False
 
                 else:
                     if self.fs_btn.is_mouse_on() or self.start_btn.is_mouse_on() or self.upload_btn.is_mouse_on() or self.exit_btn.is_mouse_on():
@@ -121,6 +142,9 @@ class MainMenu:
                         self.new_game = True
                         self.text = ""
 
+                    if self.upload_btn.is_clicked(event):
+                        self.instruction = True
+
                     if self.fs_btn.is_clicked(event) and not self.fullscreen:
                         self.fullscreen = True
                         self.screen = pygame.display.set_mode(self.monitor, pygame.FULLSCREEN)
@@ -129,8 +153,9 @@ class MainMenu:
                         self.fs_btn_clicked(self.bckgnd, new_image,
                                             (self.monitor[0] - WIDTH * (self.monitor[1] / HEIGHT)) // 2, 0)
 
-                        new_image = ImgEditor.enhance_image(ImgEditor.load_image("fs_btn_night_2.png", f"\main_menu", -1),
-                                                            self.monitor[1] / HEIGHT)
+                        new_image = ImgEditor.enhance_image(
+                            ImgEditor.load_image("fs_btn_night_2.png", f"\main_menu", -1),
+                            self.monitor[1] / HEIGHT)
 
                         self.fs_btn_clicked(self.fs_btn, new_image,
                                             self.monitor[0] - 25 - new_image.get_width() - (
@@ -153,6 +178,10 @@ class MainMenu:
                                             self.monitor[
                                                 1] / 2 - new_image.get_height() / 2 + 20 + new_image.get_height()
                                             + self.upload_btn.image.get_height())
+                        new_image = ImgEditor.enhance_image(self.instruction_bck_img, self.monitor[1] / HEIGHT)
+                        self.fs_btn_clicked(self.instruction_bck, new_image,
+                                            self.monitor[0] // 2 - new_image.get_width() // 2,
+                                            self.monitor[1] // 2 - new_image.get_height() // 2)
 
                         new_image = ImgEditor.enhance_image(self.new_game_bck_img, self.monitor[1] / HEIGHT)
                         self.fs_btn_clicked(self.new_game_bck, new_image,
@@ -233,6 +262,8 @@ class MainMenu:
                     font = pygame.font.SysFont('Comic Sans MS', 40)
                     self.screen.blit(font.render(self.text, False, (47, 29, 113)),
                                      (self.enter_btn.rect.x + 10, self.enter_btn.rect.y + 4))
+        elif self.instruction:
+            self.instruction_group.draw(self.screen)
 
     def new_sprite(self, sprite, image, x, y):
         sprite.image = image
