@@ -1,0 +1,15 @@
+n
+20
+4
+15
+enemy2
+player_ball
+5
+
+#time
+#cnt of enemies
+#cnt of enemies on the field
+#enemies' attack damage
+#enemy image filename
+#enemies' bullets image filename
+#next step
